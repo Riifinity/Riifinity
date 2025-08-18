@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Riifinity Payment</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    *{box-sizing:border-box}
+
+    body {
+      margin:0;
+      font-family:'Poppins',sans-serif;
+      color:#fff;
+      text-align:center;
+      padding:2rem 1rem;
+      overflow-x:hidden;
+      position:relative;
+      background:url('https://raw.githubusercontent.com/Riifinity/foto/main/background.jpg') center/cover fixed;
+    }
+
+    body::before {
+      content:'';
+      position:fixed;
+      inset:0;
+      background:rgba(0,0,0,.3);
+      backdrop-filter:blur(5px);
+      z-index:-2;
+    }
+
+    body::after {
+      content:'';
+      position:fixed;
+      inset:0;
+      pointer-events:none;
+      z-index:-1;
+      background:linear-gradient(120deg,transparent 0%,rgba(255,255,255,.35) 50%,transparent 100%);
+      mix-blend-mode:overlay;
+      transform:translateX(-100%) skewX(-20deg);
+      animation:bgshine 2.5s infinite;
+      animation-delay:1.25s;
+    }
+
+    @keyframes bgshine {
+      from {transform:translateX(-100%) skewX(-20deg)}
+      to   {transform:translateX(100%) skewX(-20deg)}
+    }
+
+    @keyframes slideFromBottom {from{opacity:0;transform:translateY(40px)} to{opacity:1;transform:translateY(0)}}
+    @keyframes slideFromLeft   {from{opacity:0;transform:translateX(-40px)}to{opacity:1;transform:translateX(0)}}
+    @keyframes slideFromRight  {from{opacity:0;transform:translateX( 40px)}to{opacity:1;transform:translateX(0)}}
+    @keyframes dropIn {from{opacity:0;transform:translateY(-60px)}to{opacity:1;transform:translateY(0)}}
+    @keyframes shake  {0%,100%{transform:translateX(0)}20%{transform:translateX(-2px)}40%{transform:translateX(2px)}60%{transform:translateX(-2px)}80%{transform:translateX(2px)}}
+    @keyframes shine  {0%{left:-75%}100%{left:125%}}
+
+    .letter {display:inline-block;opacity:0;white-space:pre}
+    h1 {font-size:2rem;margin:.2rem 0 .6rem;letter-spacing:1.5px}
+    .subtitle {font-size:1.2rem;margin-bottom:1.5rem}
+    .info-line {margin:.4rem 0;font-weight:bold}
+
+    .logo {
+      width:130px;height:130px;
+      object-fit:cover;
+      border-radius:50%;
+      border:3px solid rgba(255,255,255,.6);
+      margin:1.2rem auto;
+      opacity:0;
+    }
+
+    .drop {animation:dropIn .8s ease-out forwards}
+
+    .pay-btn {
+      background:rgba(180,180,180,.4);
+      border:none;
+      color:#fff;
+      font-weight:700;
+      font-size:1.05rem;
+      padding:1rem;
+      width:100%;
+      max-width:400px;
+      margin:.4rem auto;
+      border-radius:14px;
+      backdrop-filter:blur(2px);
+      cursor:pointer;
+      opacity:0;
+      position:relative;
+      overflow:hidden;
+    }
+
+    .pay-btn::before {
+      content:'';
+      position:absolute;
+      top:0;
+      left:-75%;
+      width:50%;
+      height:100%;
+      background:linear-gradient(120deg,transparent,rgba(255,255,255,.4),transparent);
+      transform:skewX(-20deg);
+      animation:shine 2.5s infinite;
+      z-index:1;
+    }
+
+    .pay-btn.show-left  {animation:slideFromLeft  .5s forwards}
+    .pay-btn.show-right {animation:slideFromRight .5s forwards}
+
+    .warning {font-weight:700;opacity:0;margin:0;line-height:1.4}
+    .red-text {color:#ff4d4d}
+    .show-right {animation:slideFromRight .6s forwards,shake .6s .6s infinite}
+    .show-left  {animation:slideFromLeft  .6s forwards,shake .6s .6s infinite}
+
+    .accordion-content {
+      display:none;
+      margin-top:1rem;
+    }
+
+    .accordion-content.show {
+      display:block;
+    }
+
+    .qris-preview {
+      width:40%;
+      max-width:200px;
+      border-radius:15px;
+      margin:1rem 0;
+      cursor:pointer;
+    }
+
+    .modal {
+      position:fixed;
+      inset:0;
+      background:rgba(0,0,0,.8);
+      display:none;
+      align-items:center;
+      justify-content:center;
+      z-index:9999;
+    }
+
+    .modal img {
+      max-width:90%;
+      max-height:90%;
+      border-radius:15px;
+      box-shadow:0 0 20px #000;
+    }
+  </style>
+</head>
+<body>
+
+<h1 id="title"></h1>
+<p id="subtitle" class="subtitle"></p>
+<img id="logo" class="logo" src="https://raw.githubusercontent.com/Riifinity/foto/main/logo.jpg" alt="Riifinity Logo">
+
+<p id="line1" class="info-line"></p>
+<p id="line2" class="info-line"></p>
+<p id="line3" class="info-line"></p>
+<p id="line4" class="info-line"></p>
+
+<!-- PAYMENT BUTTONS -->
+<button class="pay-btn" id="btn-qris" onclick="togglePayment('qris')">QRIS</button>
+<div id="qris" class="accordion-content">
+  <img src="https://raw.githubusercontent.com/Riifinity/foto/main/qris.jpg" class="qris-preview" onclick="openModal(this.src)" alt="QRIS">
+  <p>PENCET FOTO UNTUK MEMPERBESAR TAMPILAN FOTO<br>JIKA PAYMENT SUDAH PREMIUM DILARANG TF KE QRIS</p>
+</div>
+
+<button class="pay-btn" id="btn-Seabank" onclick="togglePayment('Seabank')">SEABANK</button>
+<div id="Seabank" class="accordion-content">
+  <p>NO: <strong>901631284711</strong><br>A/N: MUHAMMAD ASRORI</p>
+    <p>UTAMAKAN TF VIA SEABANK MULAI DARI NOMINAL 10K</p>
+</div>
+
+<button class="pay-btn" id="btn-dana" onclick="togglePayment('dana')">DANA</button>
+<div id="dana" class="accordion-content">
+  <p>NO: <strong>0895383301627</strong><br>A/N: MUHAMMAD ASRORI</p>
+</div>
+
+<button class="pay-btn" id="btn-gopay" onclick="togglePayment('gopay')">GOPAY</button>
+<div id="gopay" class="accordion-content">
+  <p>NO: <strong>0895383301627</strong><br>A/N: MUHAMMAD ASRORI</p>
+</div>
+
+<button class="pay-btn" id="btn-ovo" onclick="togglePayment('ovo')">OVO</button>
+<div id="ovo" class="accordion-content">
+  <p>NO: <strong>0895383301627</strong><br>A/N: MUHAMMAD ASRORI</p>
+</div>
+
+<!-- WARNING -->
+<div id="warnings" style="margin-top:2rem">
+  <p id="warn1" class="warning red-text">SERTAKAN BUKTI TRANSFER</p>
+  <p id="warn2" class="warning red-text">DEMI KENYAMANAN BERSAMA</p>
+</div>
+
+<!-- MODAL -->
+<div id="qrModal" class="modal" onclick="closeModal()">
+  <img id="modalImg" src="" alt="QRIS Besar">
+</div>
+
+<script>
+function animateText(t,id,d=80,done){
+  const el=document.getElementById(id);el.innerHTML='';
+  [...t].forEach((c,i)=>{
+    const s=document.createElement('span');s.textContent=c;
+    s.className='letter';
+    s.style.animation=(i%2?'slideFromRight':'slideFromLeft')+' .5s forwards';
+    s.style.animationDelay=(i*d/1000)+'s';
+    el.appendChild(s);
+  });
+  if(done)setTimeout(done,t.length*d+500);
+}
+
+window.addEventListener('DOMContentLoaded',()=>{
+  animateText('PAYMENT LIST','title',80,()=>{
+    animateText('Silakan Pilih Metode Pembayaran Di Bawah','subtitle',60,()=>{
+      document.getElementById('logo').classList.add('drop');
+      setTimeout(()=>{
+        animateText('Scan QR Code Di Bawah Ini','line1',50);
+        animateText('Utamakan Transfer Via Seabank Mulai Nominal 10K','line2',50);
+        animateText('Jika Dibawah 10k Silahkan Tf Ke Dana','line3',50);
+        animateText('Transfer Via QRIS Hanya Jika DANA Belum Premium','line4',50);
+        setTimeout(showButtonsSequentially,2700);
+      },800);
+    });
+  });
+});
+
+function showButtonsSequentially(){
+  ['btn-qris','btn-Seabank','btn-dana','btn-gopay','btn-ovo'].forEach((id,i)=>{
+    setTimeout(()=>{document.getElementById(id).classList.add(i%2?'show-right':'show-left');
+      if(i===3)setTimeout(showWarnings,700);},i*500);
+  });
+}
+
+function showWarnings(){
+  document.getElementById('warn1').classList.add('show-right');
+  document.getElementById('warn2').classList.add('show-left');
+}
+
+function togglePayment(id){
+  document.querySelectorAll('.accordion-content').forEach(el=>{
+    if(el.id!==id)el.classList.remove('show');
+  });
+  document.getElementById(id).classList.toggle('show');
+}
+
+function openModal(src){
+  document.getElementById('modalImg').src=src;
+  document.getElementById('qrModal').style.display='flex';
+}
+
+function closeModal(){
+  document.getElementById('qrModal').style.display='none';
+}
+</script>
+</body>
+</html>
